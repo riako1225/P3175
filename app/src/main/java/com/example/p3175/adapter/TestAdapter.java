@@ -1,7 +1,5 @@
-package com.example.p3175;
+package com.example.p3175.adapter;
 
-import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.HashMap;
+import com.example.p3175.R;
+
 import java.util.List;
 
 public class TestAdapter extends ListAdapter<List<String>, TestAdapter.TestViewHolder> {
