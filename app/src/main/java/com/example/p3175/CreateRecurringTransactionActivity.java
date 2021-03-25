@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class EditRecurringTransactionActivity extends BaseActivity {
+public class CreateRecurringTransactionActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +29,5 @@ public class EditRecurringTransactionActivity extends BaseActivity {
         radioButtonIsSalary.setChecked(true);
         buttonOK.setEnabled(false);
         //endregion
-
-        //region 1. FILL DATA OF ITEM BEING EDITED
-        //endregion
-
-        //region 2. VALIDATE INPUT
-        //endregion
-
-        //region 3. BUTTON
-        //endregion
     }
-
-
 }

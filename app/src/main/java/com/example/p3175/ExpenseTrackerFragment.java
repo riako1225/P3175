@@ -7,14 +7,17 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class ExpenseTrackerFragment extends Fragment {
+public class ExpenseTrackerFragment extends BaseFragment {
 
        public ExpenseTrackerFragment() {
         // Required empty public constructor
@@ -32,6 +35,11 @@ public class ExpenseTrackerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         //region 0. VIEW
+        EditText textViewTodayRemaining = activity.findViewById(R.id.textViewTodayRemainingAmount);
+        EditText textViewTodayAllowed = activity.findViewById(R.id.textViewTodayAllowedAmount);
+        TextView textViewSavings = activity.findViewById(R.id.textViewSavingsAmount);
+        TextView textViewIncome = activity.findViewById(R.id.textViewIncomeAmount);
+        RecyclerView recyclerView = activity.findViewById(R.id.recyclerViewTransaction);
         //endregion
 
         //region 1. TOP HALF: MONEY NUMBERS

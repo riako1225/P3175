@@ -5,9 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class CreateTransactionActivity extends AppCompatActivity {
+public class CreateTransactionActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +19,17 @@ public class CreateTransactionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_transaction);
 
         //region 0. VIEW
+
+        EditText editTextAmount = findViewById(R.id.editTextEditTransactionAmount);
+        EditText editTextDate = findViewById(R.id.editTextEditTransactionDate);
+        EditText editTextDescription = findViewById(R.id.editTextEditTransactionDescription);
+        EditText editTextCategory = findViewById(R.id.editTextEditTransactionCategoryName);
+        ImageButton buttonDatePicker = findViewById(R.id.imageButtonDatePicker);
+        Button buttonOK = findViewById(R.id.buttonEditTransactionOK);
+
+        editTextCategory.setEnabled(false);
+        editTextDate.setEnabled(false);
+        buttonOK.setEnabled(!TextUtils.isEmpty(editTextAmount.getText()));
         //endregion
 
         //region 1. VALIDATE INPUT

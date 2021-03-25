@@ -12,14 +12,12 @@ import com.example.p3175.adapter.UserAdapter;
 import com.example.p3175.db.DatabaseHelper;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class AdminActivity extends BaseActivity {
-
-
+public class ManageUserActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin);
+        setContentView(R.layout.activity_list_user);
 
         //region 0. VIEW
 
