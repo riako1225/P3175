@@ -47,7 +47,7 @@ public class TestAdapter extends ListAdapter<List<String>, TestAdapter.TestViewH
         List<String> item = getItem(position);
 
         holder.textView1.setText(item.get(1));
-        holder.textView2.setText(item.get(2));
+//        holder.textView2.setText(item.get(2));
     }
 
     class TestViewHolder extends RecyclerView.ViewHolder{

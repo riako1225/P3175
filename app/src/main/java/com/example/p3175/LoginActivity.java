@@ -28,10 +28,11 @@ public class LoginActivity extends BaseActivity {
 
         //region 1. IF ALREADY LOGGED IN, NAV TO MAIN, UNABLE TO NAV BACK
 
+        // TODO: 3/24/2021
         // get "logged_in_user" from shared pref
-        // TODO: 3/24/2021
+
         // nav to main activity
-        // TODO: 3/24/2021
+
         //endregion
 
         //region 2. LOGIN BUTTON
@@ -89,8 +90,10 @@ public class LoginActivity extends BaseActivity {
         //endregion
 
         // test
-        buttonLogin.setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
+        Button test = findViewById(R.id.buttonTest);
+        test.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivityForResult(intent, 0);
         });
     }
 }

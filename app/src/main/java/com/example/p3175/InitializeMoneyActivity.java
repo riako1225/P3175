@@ -9,18 +9,18 @@ import android.widget.Button;
 import android.widget.EditText;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class CreateBigExpenseActivity extends BaseActivity {
+public class InitializeMoneyActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_big_expense);
+        setContentView(R.layout.activity_initialize_user);
 
         //region 0. VIEW
 
-        EditText editTextAmount = findViewById(R.id.editTextEditBigExpenseAmount);
-        EditText editTextDescription = findViewById(R.id.editTextEditBigExpenseDescription);
-        Button buttonOK = findViewById(R.id.buttonEditBigExpenseOK);
+        EditText editTextCurrentSavings = findViewById(R.id.editTextCurrentSavings);
+        Button buttonSalaryBill = findViewById(R.id.buttonFirstTimeManageSalary);
+        Button buttonOK = findViewById(R.id.buttonInputInformationToMain);
         //endregion
 
         //region 1. VALIDATE INPUT

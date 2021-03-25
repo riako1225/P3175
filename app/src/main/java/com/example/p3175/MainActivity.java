@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
             if (currentFragmentId == R.id.expenseTrackerFragment) {
 
                 // nav to category activity for adding transaction
-                Intent intent = new Intent(this, CategoryActivity.class);
+                Intent intent = new Intent(this, ChooseTransactionCategoryActivity.class);
                 intent.putExtra("isAddingTransaction", true);
                 startActivity(intent);
 
@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity {
         int itemId = item.getItemId();
 
         if (itemId == R.id.menuItemCategory) {
-            startActivity(new Intent(this, CategoryActivity.class));
+            startActivity(new Intent(this, ChooseTransactionCategoryActivity.class));
         } else if (itemId == R.id.menuItemSalaryBill) {
             startActivity(new Intent(this, RecurringTransactionActivity.class));
         } else if (itemId == R.id.menuItemAccount) {

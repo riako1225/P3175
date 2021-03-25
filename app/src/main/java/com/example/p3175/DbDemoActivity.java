@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class DbDemoActivity extends AppCompatActivity {
+public class DbDemoActivity extends BaseActivity {
     TestAdapter adapter;
     List<List<String>> list;
 
@@ -46,7 +46,7 @@ public class DbDemoActivity extends AppCompatActivity {
 
         // display the list
         list = new ArrayList<>();
-        refreshList(DatabaseHelper.TABLE_USER);
+        refreshList(DatabaseHelper.TABLE_USER, adapter);
 
         // swipe to delete
         Activity activity = this;
@@ -70,7 +70,7 @@ public class DbDemoActivity extends AppCompatActivity {
                             databaseHelper.delete(DatabaseHelper.TABLE_USER, Integer.parseInt(record.get(0)));
 
                             // refresh the list
-                            refreshList(DatabaseHelper.TABLE_USER);
+                            refreshList(DatabaseHelper.TABLE_USER, adapter);
 
                         })
                         .setNegativeButton("No", (dialog, which) -> {
@@ -89,7 +89,7 @@ public class DbDemoActivity extends AppCompatActivity {
             databaseHelper.insertUser("3", "33");
 
             // refresh list
-            refreshList(DatabaseHelper.TABLE_USER);
+            refreshList(DatabaseHelper.TABLE_USER, adapter);
         });
 
         // button: test edit
@@ -99,27 +99,27 @@ public class DbDemoActivity extends AppCompatActivity {
             databaseHelper.updateUser(1, "123", "123123");
 
             // refresh list
-            refreshList(DatabaseHelper.TABLE_USER);
+            refreshList(DatabaseHelper.TABLE_USER, adapter);
         });
     }
 
-    /**
-     * Select all records from a table, convert to a list and display them
-     */
-
-    private void refreshList(String table) {
-        list = new ArrayList<>();
-
-        Cursor cursor = databaseHelper.list(table);
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                List<String> row = new ArrayList<>();
-                for (int i = 0; i < cursor.getColumnCount(); i++) {
-                    row.add(cursor.getString(i));
-                }
-                list.add(row);
-            }
-        }
-        adapter.submitList(list);
-    }
+//    /**
+//     * Select all records from a table, convert to a list and display them
+//     */
+//
+//    private void refreshList(String table) {
+//        list = new ArrayList<>();
+//
+//        Cursor cursor = databaseHelper.list(table);
+//        if (cursor.getCount() > 0) {
+//            while (cursor.moveToNext()) {
+//                List<String> row = new ArrayList<>();
+//                for (int i = 0; i < cursor.getColumnCount(); i++) {
+//                    row.add(cursor.getString(i));
+//                }
+//                list.add(row);
+//            }
+//        }
+//        adapter.submitList(list);
+//    }
 }
