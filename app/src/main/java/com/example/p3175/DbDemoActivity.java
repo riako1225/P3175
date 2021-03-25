@@ -2,18 +2,17 @@ package com.example.p3175;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 
+import com.example.p3175.activity.base.BaseActivity;
 import com.example.p3175.adapter.TestAdapter;
 import com.example.p3175.db.DatabaseHelper;
 
@@ -46,7 +45,7 @@ public class DbDemoActivity extends BaseActivity {
 
         // display the list
         list = new ArrayList<>();
-        refreshList(DatabaseHelper.TABLE_USER, adapter);
+        refreshList(db.list(DatabaseHelper.TABLE_USER), adapter);
 
         // swipe to delete
         Activity activity = this;
@@ -70,7 +69,7 @@ public class DbDemoActivity extends BaseActivity {
                             databaseHelper.delete(DatabaseHelper.TABLE_USER, Integer.parseInt(record.get(0)));
 
                             // refresh the list
-                            refreshList(DatabaseHelper.TABLE_USER, adapter);
+                            refreshList(db.list(DatabaseHelper.TABLE_USER), adapter);
 
                         })
                         .setNegativeButton("No", (dialog, which) -> {
@@ -89,7 +88,7 @@ public class DbDemoActivity extends BaseActivity {
             databaseHelper.insertUser("3", "33");
 
             // refresh list
-            refreshList(DatabaseHelper.TABLE_USER, adapter);
+            refreshList(db.list(DatabaseHelper.TABLE_USER), adapter);
         });
 
         // button: test edit
@@ -99,7 +98,7 @@ public class DbDemoActivity extends BaseActivity {
             databaseHelper.updateUser(1, "123", "123123");
 
             // refresh list
-            refreshList(DatabaseHelper.TABLE_USER, adapter);
+            refreshList(db.list(DatabaseHelper.TABLE_USER), adapter);
         });
     }
 

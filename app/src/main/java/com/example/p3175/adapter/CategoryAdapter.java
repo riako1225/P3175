@@ -1,8 +1,8 @@
 package com.example.p3175.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.p3175.CreateTransactionActivity;
-import com.example.p3175.EditCategoryActivity;
+import com.example.p3175.activity.transaction.CreateTransactionActivity;
+import com.example.p3175.activity.category.EditCategoryActivity;
 import com.example.p3175.R;
 
 import java.util.List;
@@ -23,6 +23,7 @@ public class CategoryAdapter extends ListAdapter<List<String>, CategoryAdapter.C
     Activity activity;
     int layoutId;
     boolean isForTransaction;
+    OnClickListener onClickListener;
 
     public CategoryAdapter(Activity activity, int layoutId, boolean isForTransaction) {
         super(new DiffUtil.ItemCallback<List<String>>() {
@@ -60,21 +61,29 @@ public class CategoryAdapter extends ListAdapter<List<String>, CategoryAdapter.C
         holder.textViewCategoryName.setText(item.get(1));   // name
 
         // click navigation: add a transaction / edit this category
+//        holder.itemView.setOnClickListener(v -> {
+//            onClickListener.onClick(v, );
+//        });
+
+
         holder.itemView.setOnClickListener(v -> {
             int categoryId = Integer.parseInt(item.get(0));
             Intent intent;
-
             if (isForTransaction) {
                 intent = new Intent(activity, CreateTransactionActivity.class);
             } else {
                 intent = new Intent(activity, EditCategoryActivity.class);
             }
+            Log.d("tttt", String.valueOf("onBindViewHolder: " + intent==null));
 
             intent.putExtra("categoryId", categoryId);
             activity.startActivity(intent);
         });
     }
 
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
 
     static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView textViewCategoryName;

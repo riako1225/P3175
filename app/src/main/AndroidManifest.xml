@@ -9,33 +9,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.P3175">
-        <activity android:name=".CreateRecurringTransactionActivity"></activity>
-        <activity android:name=".ManageCategoryActivity" />
-        <activity android:name=".CreateBigExpenseActivity" />
-        <activity android:name=".CreateTransactionActivity" />
-        <activity android:name=".CreateUserActivity" />
-        <activity android:name=".CreateCategoryActivity" />
+        <activity android:name=".activity.bigexpense.GetBigExpensePlanActivity"></activity>
+        <activity android:name=".activity.recurringtransaction.CreateRecurringTransactionActivity" />
+        <activity android:name=".activity.category.ManageCategoryActivity" />
+        <activity android:name=".activity.bigexpense.CreateBigExpenseActivity" />
+        <activity android:name=".activity.transaction.CreateTransactionActivity" />
+        <activity android:name=".activity.user.CreateUserActivity" />
+        <activity android:name=".activity.category.CreateCategoryActivity" />
         <activity android:name=".DbDemoActivity" />
-        <activity android:name=".RecurringTransactionActivity" />
-        <activity android:name=".InitializeMoneyActivity" />
-        <activity android:name=".ChooseTransactionCategoryActivity" />
-        <activity android:name=".FirstTimeLoginActivity" />
-        <activity android:name=".ReportActivity" />
-        <activity android:name=".EditBigExpenseActivity" />
-        <activity android:name=".EditRecurringTransactionActivity" />
-        <activity android:name=".EditTransactionActivity" />
-        <activity android:name=".EditCategoryActivity" />
-        <activity android:name=".EditUserActivity" />
-        <activity android:name=".BaseActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activity.recurringtransaction.ManageRecurringTransactionActivity" />
+        <activity android:name=".activity.user.InitializeMoneyActivity" />
+        <activity android:name=".activity.category.ChooseTransactionCategoryActivity" />
+        <activity android:name=".activity.user.FirstTimeLoginActivity" />
+        <activity android:name=".activity.report.ReportActivity" />
+        <activity android:name=".activity.bigexpense.EditBigExpenseActivity" />
+        <activity android:name=".activity.recurringtransaction.EditRecurringTransactionActivity" />
+        <activity android:name=".activity.transaction.EditTransactionActivity" />
+        <activity android:name=".activity.category.EditCategoryActivity" />
+        <activity android:name=".activity.user.EditUserActivity" />
+        <activity android:name=".activity.base.BaseActivity" />
+        <activity android:name=".activity.user.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ManageUserActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".activity.user.ManageUserActivity" />
+        <activity android:name=".activity.main.MainActivity" />
     </application>
 
 </manifest>
