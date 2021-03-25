@@ -9,15 +9,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.P3175">
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".AdminActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".CreateBigExpenseActivity"></activity>
+        <activity android:name=".CreateTransactionActivity" />
+        <activity android:name=".CreateUserActivity" />
+        <activity android:name=".CreateCategoryActivity" />
+        <activity android:name=".DbDemoActivity" />
+        <activity android:name=".RecurringTransactionActivity" />
+        <activity android:name=".InitializeUserActivity" />
+        <activity android:name=".CategoryActivity" />
+        <activity android:name=".FirstTimeLoginActivity" />
+        <activity android:name=".ReportActivity" />
+        <activity android:name=".EditBigExpenseActivity" />
+        <activity android:name=".EditRecurringTransactionActivity" />
+        <activity android:name=".EditTransactionActivity" />
+        <activity android:name=".EditCategoryActivity" />
+        <activity android:name=".EditUserActivity" />
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AdminActivity" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
