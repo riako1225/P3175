@@ -26,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static SQLiteDatabase readableDB;
 
     private static final String DB_NAME = "p3175_database"; // can change this name
-    private static int DB_VERSION = 2;
+    private static int DB_VERSION = 1;
 
     public static final String TABLE_USER = "user";
     public static final String TABLE_OVERVIEW = "overview";
@@ -82,6 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         doDestructiveMigration(db);
+        onCreate(db);
     }
 
     //region COMMON METHODS
