@@ -11,7 +11,6 @@ import android.widget.Button;
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
 import com.example.p3175.adapter.UserAdapter;
-import com.example.p3175.db.DatabaseHelper;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ManageUserActivity extends BaseActivity {
@@ -20,7 +19,7 @@ public class ManageUserActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_user);
+        setContentView(R.layout.activity_manage_user);
 
         //region 0. VIEW
 
@@ -31,7 +30,7 @@ public class ManageUserActivity extends BaseActivity {
         //region 1. SETUP RECYCLER VIEW FOR DATA LIST
 
         // setup recycler view
-        adapter = new UserAdapter(R.layout.cell_user);
+        adapter = new UserAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -47,7 +46,7 @@ public class ManageUserActivity extends BaseActivity {
 
         //endregion
 
-        //region 2. CREATE USER BUTTON
+        //region 2. BUTTON CREATE
 
         buttonCreateAccount.setOnClickListener(v -> {
             // nav to edit user activity
@@ -61,6 +60,6 @@ public class ManageUserActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        refreshList(db.list(DatabaseHelper.TABLE_USER), adapter);
+        adapter.submitList(db.listUsers());
     }
 }

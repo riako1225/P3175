@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
@@ -25,18 +26,30 @@ public class Converter {
     }
 
     //region BIG DECIMAL <-> LONG
-    public static BigDecimal toBigDecimal(long value) {
+
+    public static BigDecimal longToBigDecimal(long value) {
         return new BigDecimal(value / 100);
     }
 
-    public static long fromBigDecimal(BigDecimal bigDecimal) {
+    public static long bigDecimalToLong(BigDecimal bigDecimal) {
         return bigDecimal == null ? null : bigDecimal.multiply(new BigDecimal(100)).longValue();
     }
     //endregion
 
+    //region BIG DECIMAL <-> STRING
+
+    public static BigDecimal stringToBigDecimal(String string){
+        return new BigDecimal(string);
+    }
+
+    public static String bigDecimalToString(BigDecimal bigDecimal){
+        return bigDecimal.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
 
     //region LOCAL DATE <-> STRING
-    public static LocalDate toLocalDate(String value) {
+
+    public static LocalDate stringToLocalDate(String value) {
         try {
             return value == null ? null : LocalDate.parse(value);
         } catch (DateTimeParseException e) {
@@ -44,13 +57,14 @@ public class Converter {
         }
     }
 
-    public static String fromLocalDate(LocalDate date) {
+    public static String localDateToString(LocalDate date) {
         return date == null ? null : date.toString();
     }
     //endregion
 
 
     //region FOR DB ARGUMENTS
+
     /**
      * Convert a couple of Strings to String[] for argument
      */
@@ -68,6 +82,7 @@ public class Converter {
 
 
     //region FOR PASSWORD
+
     /**
      * Convert a String to MD5
      */

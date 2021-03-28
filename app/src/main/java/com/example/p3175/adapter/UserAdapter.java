@@ -1,5 +1,6 @@
 package com.example.p3175.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,43 +12,44 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.p3175.R;
+import com.example.p3175.activity.transaction.EditTransactionActivity;
+import com.example.p3175.db.entity.User;
 
 import java.util.List;
 
-public class UserAdapter extends ListAdapter<List<String>, UserAdapter.UserViewHolder> {
-    int layoutId;
+public class UserAdapter extends ListAdapter<User, UserAdapter.UserViewHolder> {
 
-    public UserAdapter(int layoutId) {
-        super(new DiffUtil.ItemCallback<List<String>>() {
+    public UserAdapter() {
+        super(new DiffUtil.ItemCallback<User>() {
             @Override
-            public boolean areItemsTheSame(@NonNull List<String> oldItem, @NonNull List<String> newItem) {
-                return oldItem.get(0).equals(newItem.get(0));
+            public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
+                return oldItem.getId()==newItem.getId();
             }
 
             @Override
-            public boolean areContentsTheSame(@NonNull List<String> oldItem, @NonNull List<String> newItem) {
+            public boolean areContentsTheSame(@NonNull User oldItem, @NonNull User newItem) {
                 return oldItem.equals(newItem);
             }
         });
 
-        this.layoutId = layoutId;
     }
 
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(layoutId, parent, false);
+        View itemView = inflater.inflate(R.layout.cell_user, parent, false);
 
         return new UserViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        List<String> item = getItem(position);
+        User user = getItem(position);
 
+        // set text
         holder.textViewUserId.setText(String.valueOf(position + 1));    // position in the list
-        holder.textViewUserEmail.setText(item.get(1));                  // email
+        holder.textViewUserEmail.setText(user.getEmail());
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {

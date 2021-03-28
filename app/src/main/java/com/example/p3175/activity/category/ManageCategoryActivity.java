@@ -21,7 +21,7 @@ public class ManageCategoryActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_category);
+        setContentView(R.layout.activity_manage_category);
 
         //region 0. VIEW
 
@@ -32,18 +32,15 @@ public class ManageCategoryActivity extends BaseActivity {
 
         //region 1. RECYCLER VIEW
 
-        adapterIncome = new CategoryAdapter(this, R.layout.cell_category, false);
-        adapterExpense = new CategoryAdapter(this, R.layout.cell_category, false);
+        adapterIncome = new CategoryAdapter(this,  false);
+        adapterExpense = new CategoryAdapter(this,  false);
         recyclerViewIncome.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewExpense.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewIncome.setAdapter(adapterIncome);
         recyclerViewExpense.setAdapter(adapterExpense);
-
-//        refreshList(db.listCategories(true), adapterIncome);
-//        refreshList(db.listCategories(false), adapterExpense);
         //endregion
 
-        //region 2. BUTTON
+        //region 2. BUTTON CREATE
         buttonAdd.setOnClickListener(v -> {
             startActivity(new Intent(this, CreateCategoryActivity.class));
         });
@@ -55,7 +52,7 @@ public class ManageCategoryActivity extends BaseActivity {
         super.onResume();
 
         // refresh the list here
-        refreshList(db.listCategories(true), adapterIncome);
-        refreshList(db.listCategories(false), adapterExpense);
+        adapterIncome.submitList(db.listCategories(true));
+        adapterExpense.submitList(db.listCategories(false));
     }
 }

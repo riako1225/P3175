@@ -10,10 +10,14 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.p3175.db.entity.BigExpense;
+import com.example.p3175.db.entity.Category;
+import com.example.p3175.db.entity.Overview;
+import com.example.p3175.db.entity.RecurringTransaction;
+import com.example.p3175.db.entity.Transaction;
+import com.example.p3175.db.entity.User;
 import com.example.p3175.util.Converter;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static SQLiteDatabase readableDB;
 
     private static final String DB_NAME = "p3175_database"; // can change this name
-    private static int DB_VERSION = 1;
+    private static int DB_VERSION = 2;
 
     public static final String TABLE_USER = "user";
     public static final String TABLE_OVERVIEW = "overview";
@@ -87,231 +91,431 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //region COMMON METHODS
 
-    /**
-     * Select a single record by id
-     */
-    public Cursor select(String table, int id) {
-        String query = String.format("SELECT * FROM %s WHERE id = %d", table, id);
-        return readableDB.rawQuery(query, null);
-    }
 
-    /**
-     * Select all records in a table
-     */
-    public Cursor list(String table) {
-        String query = String.format("SELECT * FROM %s", table);
-        return readableDB.rawQuery(query, null);
-    }
-
-    /**
-     * Select records with a given user_id in descending order
-     */
-    public Cursor listByUserId(String table, int userId) {
-        String query = String.format("SELECT * FROM %s WHERE user_id = %d ORDER BY id DESC", table, userId);
-        return readableDB.rawQuery(query, null);
-    }
-
-    /**
-     * Delete a record by id
-     *
-     * @return number of deleted rows
-     */
     public int delete(String table, int id) {
         return writableDB.delete(table, "id = ?", Converter.toArgs(id));
     }
     //endregion
 
-    //region INSERT & UPDATE SPECIFIC TABLES
+    //region USER
 
-    public long insertUser(String email, String password) {
+    public User selectUser(int id) {
+        String query = String.format("SELECT * FROM %s WHERE id = %d", TABLE_USER, id);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            User result = new User(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2));
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public User selectUserByEmail(String email) {
+        String query = String.format("SELECT * FROM %s WHERE email = %s", TABLE_USER, email);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            User result = new User(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2));
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public User selectUserByEmailPassword(String email, String password) {
+        String query = String.format("SELECT * FROM %s WHERE email = %s AND password = %s",
+                TABLE_USER, email, password);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            User result = new User(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2));
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public List<User> listUsers() {
+        String query = String.format("SELECT * FROM %s", TABLE_USER);
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<User> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new User(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2)));
+        }
+        cursor.close();
+        return results;
+    }
+
+    public long insertUser(User user) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_EMAIL, email);
-        values.put(COLUMN_USER_PASSWORD, password);
+        values.put(COLUMN_USER_EMAIL, user.getEmail());
+        values.put(COLUMN_USER_PASSWORD, user.getPassword());
         return writableDB.insert(TABLE_USER, null, values);
     }
 
-    public int updateUser(int id, String username, String password) {
+    public int updateUser(User user) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_EMAIL, username);
-        values.put(COLUMN_USER_PASSWORD, password);
-        return writableDB.update(TABLE_USER, values, "id = ?", Converter.toArgs(id));
-    }
-
-    public long insertOverview(int userId, BigDecimal incomes, BigDecimal savings, BigDecimal todayAllowed, BigDecimal todayRemaining) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_OVERVIEW_INCOMES, Converter.fromBigDecimal(incomes));
-        values.put(COLUMN_OVERVIEW_SAVINGS, Converter.fromBigDecimal(savings));
-        values.put(COLUMN_OVERVIEW_TODAY_ALLOWED, Converter.fromBigDecimal(todayAllowed));
-        values.put(COLUMN_OVERVIEW_TODAY_REMAINING, Converter.fromBigDecimal(todayRemaining));
-        return writableDB.insert(TABLE_OVERVIEW, null, values);
-    }
-
-    public int updateOverview(int id, int userId, BigDecimal incomes, BigDecimal savings, BigDecimal todayAllowed, BigDecimal todayRemaining) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_OVERVIEW_INCOMES, Converter.fromBigDecimal(incomes));
-        values.put(COLUMN_OVERVIEW_SAVINGS, Converter.fromBigDecimal(savings));
-        values.put(COLUMN_OVERVIEW_TODAY_ALLOWED, Converter.fromBigDecimal(todayAllowed));
-        values.put(COLUMN_OVERVIEW_TODAY_REMAINING, Converter.fromBigDecimal(todayRemaining));
-        return writableDB.update(TABLE_OVERVIEW, values, "id = ?", Converter.toArgs(id));
-    }
-
-    public long insertCategory(String name, boolean isIncome) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, name);
-        values.put(COLUMN_CATEGORY_IS_INCOME, isIncome ? 1 : 0);
-        return writableDB.insert(TABLE_CATEGORY, null, values);
-    }
-
-    public int updateCategory(int id, String name, boolean isIncome) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, name);
-        values.put(COLUMN_CATEGORY_IS_INCOME, isIncome ? 1 : 0);
-        return writableDB.update(TABLE_CATEGORY, values, "id = ?", Converter.toArgs(id));
-    }
-
-    public long insertTransaction(int userId, int categoryId, BigDecimal amount, LocalDate date, String description) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_CATEGORY_ID, categoryId);
-        values.put(COLUMN_AMOUNT, Converter.fromBigDecimal(amount));
-        values.put(COLUMN_DATE, Converter.fromLocalDate(date));
-        values.put(COLUMN_DESCRIPTION, description);
-        return writableDB.insert(TABLE_TRANSACTION, null, values);
-    }
-
-    public int updateTransaction(int id, int userId, int categoryId, BigDecimal amount, LocalDate date, String description) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_CATEGORY_ID, categoryId);
-        values.put(COLUMN_AMOUNT, Converter.fromBigDecimal(amount));
-        values.put(COLUMN_DATE, Converter.fromLocalDate(date));
-        values.put(COLUMN_DESCRIPTION, description);
-        return writableDB.update(TABLE_TRANSACTION, values, "id = ?", Converter.toArgs(id));
-    }
-
-    public long insertRecurringTransaction(int userId, int categoryId, BigDecimal amount, int dayOfMonth, String description) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_CATEGORY_ID, categoryId);
-        values.put(COLUMN_AMOUNT, Converter.fromBigDecimal(amount));
-        values.put(COLUMN_DAY_OF_MONTH, dayOfMonth);
-        values.put(COLUMN_DESCRIPTION, description);
-        return writableDB.insert(TABLE_RECURRING_TRANSACTION, null, values);
-    }
-
-    public int updateRecurringTransaction(int id, int userId, int categoryId, BigDecimal amount, int dayOfMonth, String description) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_CATEGORY_ID, categoryId);
-        values.put(COLUMN_AMOUNT, Converter.fromBigDecimal(amount));
-        values.put(COLUMN_DAY_OF_MONTH, dayOfMonth);
-        values.put(COLUMN_DESCRIPTION, description);
-        return writableDB.update(TABLE_RECURRING_TRANSACTION, values, "id = ?", Converter.toArgs(id));
-    }
-
-    public long insertBigExpense(
-            int userId, BigDecimal amount, LocalDate date, String description,
-            BigDecimal incomesNeeded, BigDecimal savingsNeeded, BigDecimal loanNeeded){
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_AMOUNT, Converter.fromBigDecimal(amount));
-        values.put(COLUMN_DATE, Converter.fromLocalDate(date));
-        values.put(COLUMN_DESCRIPTION, description);
-        values.put(COLUMN_BIG_EXPENSE_INCOMES_NEEDED, Converter.fromBigDecimal(incomesNeeded));
-        values.put(COLUMN_BIG_EXPENSE_SAVINGS_NEEDED, Converter.fromBigDecimal(savingsNeeded));
-        values.put(COLUMN_BIG_EXPENSE_LOAN_NEEDED, Converter.fromBigDecimal(loanNeeded));
-        return writableDB.insert(TABLE_BIG_EXPENSE, null, values);
-    }
-
-    public int updateBigExpense(
-            int id, int userId, BigDecimal amount, LocalDate date, String description,
-            BigDecimal incomesNeeded, BigDecimal savingsNeeded, BigDecimal loanNeeded
-    ){
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_AMOUNT, Converter.fromBigDecimal(amount));
-        values.put(COLUMN_DATE, Converter.fromLocalDate(date));
-        values.put(COLUMN_DESCRIPTION, description);
-        values.put(COLUMN_BIG_EXPENSE_INCOMES_NEEDED, Converter.fromBigDecimal(incomesNeeded));
-        values.put(COLUMN_BIG_EXPENSE_SAVINGS_NEEDED, Converter.fromBigDecimal(savingsNeeded));
-        values.put(COLUMN_BIG_EXPENSE_LOAN_NEEDED, Converter.fromBigDecimal(loanNeeded));
-        return writableDB.update(TABLE_BIG_EXPENSE, values, "id = ?", Converter.toArgs(id));
+        values.put(COLUMN_USER_EMAIL, user.getEmail());
+        values.put(COLUMN_USER_PASSWORD, user.getPassword());
+        return writableDB.update(TABLE_USER, values, "id = ?", Converter.toArgs(user.getId()));
     }
     //endregion
 
-    //region SPECIFIC METHODS
-
-    /**
-     * Select a user with given username
-     */
-    public Cursor selectUserByEmail(String username) {
-        String query = String.format("SELECT * FROM user WHERE email = %s", username);
-        return readableDB.rawQuery(query, null);
-    }
-
-    /**
-     * Select a user with given username and password
-     */
-    public Cursor selectUserByEmailPassword(String email, String password) {
-        String query = String.format("SELECT * FROM user WHERE email = %s AND password = %s", email, password);
-        return readableDB.rawQuery(query, null);
-    }
-
-
-    /**
-     * Select all income / expense categories
-     */
-    public Cursor listCategories(boolean isIncome) {
-        String query;
-        if (isIncome) {
-            query = "SELECT * FROM category WHERE is_income = 1";
-        } else {
-            query = "SELECT * FROM category WHERE is_income = 0";
+    //region OVERVIEW
+    public Overview selectOverview(int id) {
+        String query = String.format("SELECT * FROM %s WHERE id = %d", TABLE_OVERVIEW, id);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            Overview result = new Overview(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    Converter.longToBigDecimal(cursor.getLong(3)),
+                    Converter.longToBigDecimal(cursor.getLong(4)),
+                    Converter.longToBigDecimal(cursor.getLong(5)));
+            cursor.close();
+            return result;
         }
-        return readableDB.rawQuery(query, null);
+        cursor.close();
+        return null;
+    }
+
+    public Overview selectOverviewByUserId(int userId) {
+        String query = String.format("SELECT * FROM %s WHERE user_id = %d", TABLE_OVERVIEW, userId);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            Overview result = new Overview(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    Converter.longToBigDecimal(cursor.getLong(3)),
+                    Converter.longToBigDecimal(cursor.getLong(4)),
+                    Converter.longToBigDecimal(cursor.getLong(5)));
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+
+    public long insertOverview(Overview overview) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, overview.getUserId());
+        values.put(COLUMN_OVERVIEW_INCOMES, Converter.bigDecimalToLong(overview.getIncomes()));
+        values.put(COLUMN_OVERVIEW_SAVINGS, Converter.bigDecimalToLong(overview.getSavings()));
+        values.put(COLUMN_OVERVIEW_TODAY_ALLOWED, Converter.bigDecimalToLong(overview.getTodayAllowed()));
+        values.put(COLUMN_OVERVIEW_TODAY_REMAINING, Converter.bigDecimalToLong(overview.getTodayRemaining()));
+        return writableDB.insert(TABLE_OVERVIEW, null, values);
+    }
+
+    public int updateOverview(Overview overview) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, overview.getUserId());
+        values.put(COLUMN_OVERVIEW_INCOMES, Converter.bigDecimalToLong(overview.getIncomes()));
+        values.put(COLUMN_OVERVIEW_SAVINGS, Converter.bigDecimalToLong(overview.getSavings()));
+        values.put(COLUMN_OVERVIEW_TODAY_ALLOWED, Converter.bigDecimalToLong(overview.getTodayAllowed()));
+        values.put(COLUMN_OVERVIEW_TODAY_REMAINING, Converter.bigDecimalToLong(overview.getTodayRemaining()));
+        return writableDB.update(TABLE_OVERVIEW, values, "id = ?", Converter.toArgs(overview.getId()));
+    }
+    //endregion
+
+    //region CATEGORY
+    public Category selectCategory(int id) {
+        String query = String.format("SELECT * FROM %s WHERE id = %d", TABLE_CATEGORY, id);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            Category result = new Category(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getInt(2) == 1);
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public List<Category> listCategories(boolean isIncome) {
+        String query = String.format("SELECT * FROM %s WHERE is_income = %d", TABLE_CATEGORY, isIncome ? 1 : 0);
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<Category> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new Category(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getInt(2) == 1));
+        }
+        cursor.close();
+        return results;
+    }
+
+    public long insertCategory(Category category) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, category.getName());
+        values.put(COLUMN_CATEGORY_IS_INCOME, category.isIncome() ? 1 : 0);
+        return writableDB.insert(TABLE_CATEGORY, null, values);
+    }
+
+    public int updateCategory(Category category) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, category.getName());
+        values.put(COLUMN_CATEGORY_IS_INCOME, category.isIncome() ? 1 : 0);
+        return writableDB.update(TABLE_CATEGORY, values, "id = ?", Converter.toArgs(category.getId()));
+    }
+    //endregion
+
+    //region TRANSACTION
+    public Transaction selectTransaction(int id) {
+        String query = String.format("SELECT * FROM %s WHERE id = %d", TABLE_TRANSACTION, id);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            Transaction result = new Transaction(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    Converter.longToBigDecimal(cursor.getLong(3)),
+                    Converter.stringToLocalDate(cursor.getString(4)),
+                    cursor.getString(2));
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public List<Transaction> listTransactionsByUserId(int userId) {
+        String query = String.format("SELECT * FROM %s WHERE user_id = %d", TABLE_TRANSACTION, userId);
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<Transaction> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new Transaction(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    Converter.longToBigDecimal(cursor.getLong(3)),
+                    Converter.stringToLocalDate(cursor.getString(4)),
+                    cursor.getString(2)));
+        }
+        cursor.close();
+        return results;
     }
 
     /**
      * Select a user's all transaction during a given month
      */
-    public Cursor listByUserIdYearMonth(int userId, String yearMonth) {
+    public List<Transaction> listTransactionsByUserIdYearMonth(int userId, String yearMonth) {
         String query = String.format(
-                "SELECT * FROM transaction WHERE user_id = %d AND date LIKE %s || '%'", userId, yearMonth);
-        return readableDB.rawQuery(query, null);
+                "SELECT * FROM %s WHERE user_id = %d AND date LIKE %s || '%'",
+                TABLE_TRANSACTION, userId, yearMonth);
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<Transaction> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new Transaction(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    Converter.longToBigDecimal(cursor.getLong(3)),
+                    Converter.stringToLocalDate(cursor.getString(4)),
+                    cursor.getString(2)));
+        }
+        cursor.close();
+        return results;
     }
 
-    /**
-     * Select all recurring income / expense transactions by user_id
-     */
-    public Cursor listRecurringTransactionsByUserId(int userId, boolean isIncome) {
-        String query;
-        if (isIncome) {
-            query = String.format(
-                    "SELECT * FROM recurring_transaction WHERE user_id = %d AND amount > 0 ORDER BY date DESC", userId);
-        } else {
-            query = String.format(
-                    "SELECT * FROM recurring_transaction WHERE user_id = %d AND amount < 0 ORDER BY date DESC", userId);
+    public long insertTransaction(Transaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, transaction.getUserId());
+        values.put(COLUMN_CATEGORY_ID, transaction.getCategoryId());
+        values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(transaction.getAmount()));
+        values.put(COLUMN_DATE, Converter.localDateToString(transaction.getDate()));
+        values.put(COLUMN_DESCRIPTION, transaction.getDescription());
+        return writableDB.insert(TABLE_TRANSACTION, null, values);
+    }
+
+    public int updateTransaction(Transaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, transaction.getUserId());
+        values.put(COLUMN_CATEGORY_ID, transaction.getCategoryId());
+        values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(transaction.getAmount()));
+        values.put(COLUMN_DATE, Converter.localDateToString(transaction.getDate()));
+        values.put(COLUMN_DESCRIPTION, transaction.getDescription());
+        return writableDB.update(TABLE_TRANSACTION, values, "id = ?", Converter.toArgs(transaction.getId()));
+    }
+    //endregion
+
+    //region RECURRING TRANSACTION
+    public RecurringTransaction selectRecurringTransaction(int id) {
+        String query = String.format("SELECT * FROM %s WHERE id = %d", TABLE_RECURRING_TRANSACTION, id);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            RecurringTransaction result = new RecurringTransaction(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    cursor.getInt(3),
+                    cursor.getString(4));
+            cursor.close();
+            return result;
         }
-        return readableDB.rawQuery(query, null);
+        cursor.close();
+        return null;
+    }
+
+    public List<RecurringTransaction> listRecurringTransactionsByUserId(int userId, boolean isIncome) {
+        String query = String.format("SELECT * FROM %s WHERE user_id = %d AND amount %s 0 ORDER BY day_of_month ASC",
+                TABLE_RECURRING_TRANSACTION, userId, isIncome ? ">" : "<");
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<RecurringTransaction> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new RecurringTransaction(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    cursor.getInt(3),
+                    cursor.getString(4)));
+        }
+        cursor.close();
+        return results;
     }
 
     /**
      * Select all recurring transactions on a given day of month
      */
-    public Cursor listRecurringTransactionsByUserIdDate(int userId, int dayOfMonth) {
+    public List<RecurringTransaction> listRecurringTransactionsByUserIdDate(int userId, int dayOfMonth) {
         String query = String.format(
-                "SELECT * FROM recurring_transaction WHERE user_id = %d AND day_of_month = %d", userId, dayOfMonth);
-        return readableDB.rawQuery(query, null);
+                "SELECT * FROM %s WHERE user_id = %d AND day_of_month = %d",
+                TABLE_RECURRING_TRANSACTION, userId, dayOfMonth);
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<RecurringTransaction> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new RecurringTransaction(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    cursor.getInt(3),
+                    cursor.getString(4)));
+        }
+        cursor.close();
+        return results;
+    }
+
+    public long insertRecurringTransaction(RecurringTransaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, transaction.getUserId());
+        values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(transaction.getAmount()));
+        values.put(COLUMN_DAY_OF_MONTH, transaction.getDayOfMonth());
+        values.put(COLUMN_DESCRIPTION, transaction.getDescription());
+        return writableDB.insert(TABLE_RECURRING_TRANSACTION, null, values);
+    }
+
+    public int updateRecurringTransaction(RecurringTransaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, transaction.getUserId());
+        values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(transaction.getAmount()));
+        values.put(COLUMN_DAY_OF_MONTH, transaction.getDayOfMonth());
+        values.put(COLUMN_DESCRIPTION, transaction.getDescription());
+        return writableDB.update(TABLE_RECURRING_TRANSACTION, values, "id = ?", Converter.toArgs(transaction.getId()));
+    }
+    //endregion
+
+    //region BIG EXPENSE
+    public BigExpense selectBigExpense(int id) {
+        String query = String.format("SELECT * FROM %s WHERE id = %d", TABLE_BIG_EXPENSE, id);
+        Cursor cursor = readableDB.rawQuery(query, null);
+        if (cursor.moveToNext()) {
+            BigExpense result = new BigExpense(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    Converter.stringToLocalDate(cursor.getString(3)),
+                    cursor.getString(4),
+                    Converter.longToBigDecimal(cursor.getLong(5)),
+                    Converter.longToBigDecimal(cursor.getLong(6)),
+                    Converter.longToBigDecimal(cursor.getLong(7)));
+            cursor.close();
+            return result;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public long insertBigExpense(BigExpense bigExpense) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, bigExpense.getId());
+        values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(bigExpense.getAmount()));
+        values.put(COLUMN_DATE, Converter.localDateToString(bigExpense.getDate()));
+        values.put(COLUMN_DESCRIPTION, bigExpense.getDescription());
+        values.put(COLUMN_BIG_EXPENSE_INCOMES_NEEDED, Converter.bigDecimalToLong(bigExpense.getIncomeNeeded()));
+        values.put(COLUMN_BIG_EXPENSE_SAVINGS_NEEDED, Converter.bigDecimalToLong(bigExpense.getSavingNeeded()));
+        values.put(COLUMN_BIG_EXPENSE_LOAN_NEEDED, Converter.bigDecimalToLong(bigExpense.getLoanNeeded()));
+        return writableDB.insert(TABLE_BIG_EXPENSE, null, values);
+    }
+
+    public int updateBigExpense(BigExpense bigExpense) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, bigExpense.getId());
+        values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(bigExpense.getAmount()));
+        values.put(COLUMN_DATE, Converter.localDateToString(bigExpense.getDate()));
+        values.put(COLUMN_DESCRIPTION, bigExpense.getDescription());
+        values.put(COLUMN_BIG_EXPENSE_INCOMES_NEEDED, Converter.bigDecimalToLong(bigExpense.getIncomeNeeded()));
+        values.put(COLUMN_BIG_EXPENSE_SAVINGS_NEEDED, Converter.bigDecimalToLong(bigExpense.getSavingNeeded()));
+        values.put(COLUMN_BIG_EXPENSE_LOAN_NEEDED, Converter.bigDecimalToLong(bigExpense.getLoanNeeded()));
+        return writableDB.update(TABLE_BIG_EXPENSE, values, "id = ?", Converter.toArgs(bigExpense.getId()));
     }
     //endregion
 
     //region OTHERS
 
-    /**
-     * Create tables
-     */
     private void createTables(SQLiteDatabase db) {
         List<String> queries = new ArrayList<>();
         queries.add(String.format(
@@ -372,12 +576,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "%s INTEGER," +
                         "%s INTEGER," +
                         "%s INTEGER," +
-                        "%s INTEGER," +
                         "%s TEXT)",
                 TABLE_RECURRING_TRANSACTION,
                 COLUMN_ID,
                 COLUMN_USER_ID,
-                COLUMN_CATEGORY_ID,
                 COLUMN_AMOUNT,
                 COLUMN_DAY_OF_MONTH,            // int
                 COLUMN_DESCRIPTION));
@@ -405,9 +607,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Insert initial data
-     */
     private void fillInitialData(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
 

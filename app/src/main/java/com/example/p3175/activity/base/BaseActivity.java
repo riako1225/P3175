@@ -14,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.example.p3175.R;
 import com.example.p3175.db.DatabaseHelper;
+import com.example.p3175.db.entity.Overview;
+import com.example.p3175.db.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,8 @@ public class BaseActivity extends AppCompatActivity {
     protected static InputMethodManager inputMethodManager;     // for showing & hiding keyboard
 
     protected int currentUserId;
+    protected User currentUser;
+    protected Overview currentOverview;
 
     // FIXME: currentUser & currentXXX
 
@@ -43,8 +47,8 @@ public class BaseActivity extends AppCompatActivity {
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         currentUserId = preferences.getInt(getResources().getString(R.string.logged_in_user_id), -1);
-
-        // FIXME: try to get user by id
+        currentUser = db.selectUser(currentUserId);
+        currentOverview = db.selectOverviewByUserId(currentUserId);
     }
 
     protected void refreshList(Cursor cursor, ListAdapter<List<String>, ? extends RecyclerView.ViewHolder> adapter) {

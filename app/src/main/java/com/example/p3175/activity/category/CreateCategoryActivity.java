@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
+import com.example.p3175.db.entity.Category;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class CreateCategoryActivity extends BaseActivity {
@@ -28,6 +29,7 @@ public class CreateCategoryActivity extends BaseActivity {
         EditText editTextCategoryName = findViewById(R.id.editTextEditCategoryName);
         Button buttonOK = findViewById(R.id.buttonEditCategoryOK);
         radioButtonIsExpense.setChecked(true);
+        buttonOK.setEnabled(false);
         //endregion
 
         //region 1. VALIDATE INPUT
@@ -42,9 +44,7 @@ public class CreateCategoryActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!editTextCategoryName.getText().toString().isEmpty()) {
-                    buttonOK.setActivated(true);
-                }
+                buttonOK.setEnabled(!editTextCategoryName.getText().toString().isEmpty());
             }
 
             @Override
@@ -58,7 +58,7 @@ public class CreateCategoryActivity extends BaseActivity {
 
         buttonOK.setOnClickListener(v -> {
             // db insert
-            db.insertCategory(editTextCategoryName.getText().toString(), radioButtonIsIncome.isChecked());
+            db.insertCategory(new Category(editTextCategoryName.getText().toString(), radioButtonIsIncome.isChecked()));
 
             // nav back
             onBackPressed();

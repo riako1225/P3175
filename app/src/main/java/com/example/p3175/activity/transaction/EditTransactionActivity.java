@@ -2,18 +2,27 @@ package com.example.p3175.activity.transaction;
 
 import androidx.annotation.RequiresApi;
 
+import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
+import com.example.p3175.db.entity.Transaction;
+import com.example.p3175.util.Converter;
+
+import java.time.LocalDate;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class EditTransactionActivity extends BaseActivity {
+
+    private LocalDate datePickerDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,21 +40,67 @@ public class EditTransactionActivity extends BaseActivity {
 
         editTextCategory.setEnabled(false);
         editTextDate.setEnabled(false);
-        buttonOK.setEnabled(!TextUtils.isEmpty(editTextAmount.getText()));
+        buttonOK.setEnabled(false);
         //endregion
 
+        //region 1. VALIDATE INPUT
 
-        //region 1. FILL DATA OF ITEM BEING EDITED
+        editTextAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                buttonOK.setEnabled(!editTextAmount.getText().toString().isEmpty());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         //endregion
 
-        //region 2. VALIDATE INPUT
+        //region 2. FILL DATA OF ITEM BEING EDITED
+
+        // db select
+        Transaction transaction = db.selectTransaction(getIntent().getIntExtra("transactionId", -1));
+        assert transaction != null;
+
+        // fill data to edit text
+        editTextCategory.setText(db.selectCategory(transaction.getCategoryId()).getName());
+        editTextAmount.setText(Converter.bigDecimalToString(transaction.getAmount()));
+        editTextDescription.setText(transaction.getDescription());
+
+        datePickerDate = transaction.getDate();
+        editTextDate.setText(datePickerDate.toString());
         //endregion
 
-        //region 3. BUTTON
+        //region 3. DATE PICKER
+
+        // date picker button
+        buttonDatePicker.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+                datePickerDate = LocalDate.of(year, month + 1, dayOfMonth);
+                editTextDate.setText(datePickerDate.toString());
+            }, datePickerDate.getYear(), datePickerDate.getMonthValue() - 1, datePickerDate.getDayOfMonth());
+            datePickerDialog.show();
+        });
+        //endregion
+
+        //region 4. BUTTON
+
         buttonOK.setOnClickListener(v -> {
             // db update
+            transaction.setAmount(Converter.stringToBigDecimal(editTextAmount.getText().toString()));
+            transaction.setDate(Converter.stringToLocalDate(editTextDate.getText().toString()));
+            transaction.setDescription(editTextDescription.getText().toString());
+            db.updateTransaction(transaction);
 
             // nav back
+            onBackPressed();
         });
         //endregion
     }

@@ -30,13 +30,13 @@
             android:id="@+id/radioButtonEditCategoryIsIncome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_button_text_category_1" />
+            android:text="@string/radio_button_text_income" />
 
         <RadioButton
             android:id="@+id/radioButtonEditCategoryIsExpense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_button_text_category_2" />
+            android:text="@string/radio_button_text_expense" />
     </RadioGroup>
 
     <EditText

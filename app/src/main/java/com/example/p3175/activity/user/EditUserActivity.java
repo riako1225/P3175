@@ -31,11 +31,13 @@ public class EditUserActivity extends BaseActivity {
         Button buttonOK = findViewById(R.id.buttonEditUserOK);
         //endregion
 
+        //region 2. VALIDATE INPUT
+        //endregion
+
         //region 1. FILL DATA OF ITEM BEING EDITED
         //endregion
 
-        //region 2. VALIDATE INPUT
-        //endregion
+
 
         //region 3. BUTTON
 

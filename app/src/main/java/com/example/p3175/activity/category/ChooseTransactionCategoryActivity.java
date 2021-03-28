@@ -4,7 +4,6 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -20,7 +19,7 @@ public class ChooseTransactionCategoryActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_category);
+        setContentView(R.layout.activity_manage_category);
 
         //region 0. VIEW
 
@@ -33,20 +32,16 @@ public class ChooseTransactionCategoryActivity extends BaseActivity {
         //region 1. RECYCLER VIEW TO LIST CATEGORIES (INCOME / EXPENSE)
 
         // setup
-        CategoryAdapter adapterIncome = new CategoryAdapter(this, R.layout.cell_category, true);
-        CategoryAdapter adapterExpense = new CategoryAdapter(this, R.layout.cell_category, true);
+        CategoryAdapter adapterIncome = new CategoryAdapter(this, true);
+        CategoryAdapter adapterExpense = new CategoryAdapter(this, true);
         recyclerViewIncome.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewExpense.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewIncome.setAdapter(adapterIncome);
         recyclerViewExpense.setAdapter(adapterExpense);
 
-        // db select
-        Cursor incomeCategories = db.listCategories(true);
-        Cursor expenseCategories = db.listCategories(false);
-
-        // refresh the list
-        refreshList(incomeCategories, adapterIncome);
-        refreshList(expenseCategories, adapterExpense);
+        // db select &  refresh the list
+        adapterIncome.submitList(db.listCategories(true));
+        adapterExpense.submitList(db.listCategories(false));
         //endregion
 
     }

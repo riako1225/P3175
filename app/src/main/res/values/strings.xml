@@ -34,7 +34,7 @@
     <string name="title_salary">Salary</string>
     <string name="title_bill">Bill</string>
     <string name="title_category">Category</string>
-    <string name="title_salary_bill">Salary and Bill</string>
+    <string name="title_recurring_transaction">Recurring Transaction</string>
     <string name="title_transaction">Transaction</string>
     <string name="title_initialize">Setting money</string>
     <string name="title_edit_account">Edit account</string>
@@ -45,6 +45,10 @@
     <string name="tab_report_line_chart">Line Chart</string>
     <string name="tab_report_pie_chart">Pie Chart</string>
 
+    <string name="title_plan_incomes">Incomes</string>
+    <string name="title_plan_savings">Savings</string>
+    <string name="title_plan_loan">Loan</string>
+
     <!--    button text-->
     <string name="button_text_next">Next</string>
     <string name="button_text_create">Create</string>
@@ -53,10 +57,10 @@
     <string name="button_text_login">Login</string>
     <string name="button_text_create_account">Create account</string>
     <string name="button_text_salary_bill">Manage Salary and Bill</string>
-    <string name="radio_button_text_category_1">Income</string>
-    <string name="radio_button_text_category_2">Expense</string>
-    <string name="radio_button_text_recurring_1">Salary</string>
-    <string name="radio_button_text_recurring_2">Bill</string>
+    <string name="radio_button_text_income">Income</string>
+    <string name="radio_button_text_expense">Expense</string>
+    <string name="radio_button_text_salary">Salary</string>
+    <string name="radio_button_text_bill">Bill</string>
 
     <!--    hint text-->
     <string name="hint_email">Email</string>

@@ -1,28 +1,27 @@
 package com.example.p3175.activity.main;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.p3175.BaseFragment;
+import com.example.p3175.activity.base.BaseFragment;
 import com.example.p3175.R;
+import com.example.p3175.adapter.TransactionAdapter;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ExpenseTrackerFragment extends BaseFragment {
+    TransactionAdapter adapter;
 
-       public ExpenseTrackerFragment() {
+    public ExpenseTrackerFragment() {
         // Required empty public constructor
     }
 
@@ -38,6 +37,7 @@ public class ExpenseTrackerFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
 
         //region 0. VIEW
+
         TextView textViewTodayRemaining = activity.findViewById(R.id.textViewTodayRemainingAmount);
         TextView textViewTodayAllowed = activity.findViewById(R.id.textViewTodayAllowedAmount);
         TextView textViewSavings = activity.findViewById(R.id.textViewSavingsAmount);
@@ -46,11 +46,24 @@ public class ExpenseTrackerFragment extends BaseFragment {
         //endregion
 
         //region 1. TOP HALF: MONEY NUMBERS
+
         //endregion
 
         //region 2. BOTTOM HALF: RECYCLER VIEW FOR LIST
+
+        adapter = new TransactionAdapter(activity, db);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(adapter);
         //endregion
 
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // refresh recycler view
+        adapter.submitList(db.listTransactionsByUserId(currentUserId));
     }
 }

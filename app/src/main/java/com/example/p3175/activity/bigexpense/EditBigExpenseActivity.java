@@ -25,15 +25,17 @@ public class EditBigExpenseActivity extends BaseActivity {
         Button buttonOK = findViewById(R.id.buttonEditBigExpenseOK);
         //endregion
 
+        //region 2. VALIDATE INPUT
+
+
+        //endregion
+
         //region 1. FILL DATA OF ITEM BEING EDITED
 
 
         //endregion
 
-        //region 2. VALIDATE INPUT
 
-
-        //endregion
 
         //region 3. BUTTON
         buttonOK.setOnClickListener(v -> {

@@ -46,12 +46,12 @@
         android:ems="10"
         android:hint="@string/hint_amount"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/editTextEditRecurringTransactionDate"
+        app:layout_constraintBottom_toTopOf="@+id/editTextEditRecurringTransactionDayOfMonth"
         app:layout_constraintStart_toStartOf="@+id/guideline18"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <EditText
-        android:id="@+id/editTextEditRecurringTransactionDate"
+        android:id="@+id/editTextEditRecurringTransactionDayOfMonth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autofillHints=""
@@ -67,7 +67,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_salary_bill"
+        android:text="@string/title_recurring_transaction"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline13"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,9 +82,9 @@
         android:hint="@string/hint_description"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/buttonEditRecurringTransactionOK"
-        app:layout_constraintEnd_toEndOf="@+id/editTextEditRecurringTransactionDate"
-        app:layout_constraintStart_toStartOf="@+id/editTextEditRecurringTransactionDate"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEditRecurringTransactionDate" />
+        app:layout_constraintEnd_toEndOf="@+id/editTextEditRecurringTransactionDayOfMonth"
+        app:layout_constraintStart_toStartOf="@+id/editTextEditRecurringTransactionDayOfMonth"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEditRecurringTransactionDayOfMonth" />
 
     <RadioGroup
         android:layout_width="wrap_content"
@@ -96,16 +96,16 @@
         app:layout_constraintTop_toTopOf="@+id/guideline13">
 
         <RadioButton
-            android:id="@+id/radioButtonIsSalary"
+            android:id="@+id/radioButtonIsIncome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_button_text_recurring_1" />
+            android:text="@string/radio_button_text_income" />
 
         <RadioButton
             android:id="@+id/radioButtonIsBill"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/radio_button_text_recurring_2" />
+            android:text="@string/radio_button_text_bill" />
 
     </RadioGroup>
 

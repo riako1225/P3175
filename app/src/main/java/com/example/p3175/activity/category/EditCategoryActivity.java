@@ -1,17 +1,18 @@
 package com.example.p3175.activity.category;
 
-import androidx.annotation.RequiresApi;
-
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
-import com.example.p3175.db.DatabaseHelper;
+import com.example.p3175.db.entity.Category;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class EditCategoryActivity extends BaseActivity {
@@ -27,33 +28,53 @@ public class EditCategoryActivity extends BaseActivity {
         RadioButton radioButtonIsExpense = findViewById(R.id.radioButtonEditCategoryIsExpense);
         EditText editTextCategoryName = findViewById(R.id.editTextEditCategoryName);
         Button buttonOK = findViewById(R.id.buttonEditCategoryOK);
+        buttonOK.setEnabled(false);
         //endregion
 
-        //region 1. FILL DATA OF ITEM BEING EDITED
+        //region 1. VALIDATE INPUT
+
+        editTextCategoryName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                buttonOK.setEnabled(!editTextCategoryName.getText().toString().isEmpty());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        //endregion
+
+        //region 2. FILL DATA OF ITEM BEING EDITED
 
         // db select
         int categoryId = getIntent().getIntExtra("categoryId", -1);
-        Cursor cursor = db.select(DatabaseHelper.TABLE_CATEGORY, categoryId);
+        Category category = db.selectCategory(categoryId);
+        assert category != null;
 
         // fill data
-        if (cursor.moveToNext()) {
-            editTextCategoryName.setText(cursor.getString(1));
-            if (cursor.getInt(2) == 1) {
-                radioButtonIsIncome.setChecked(true);
-            } else {
-                radioButtonIsExpense.setChecked(true);
-            }
+        editTextCategoryName.setText(category.getName());
+        if (category.isIncome()) {
+            radioButtonIsIncome.setChecked(true);
+        } else {
+            radioButtonIsExpense.setChecked(true);
         }
         //endregion
 
-        //region 2. VALIDATE INPUT
-        //endregion
 
         //region 3. BUTTON
 
         buttonOK.setOnClickListener(v -> {
             // db update
-            db.updateCategory(categoryId, editTextCategoryName.getText().toString(), radioButtonIsIncome.isChecked());
+            category.setName(editTextCategoryName.getText().toString());
+            category.setIncome(radioButtonIsIncome.isChecked());
+            db.updateCategory(category);
 
             // nav back
             onBackPressed();

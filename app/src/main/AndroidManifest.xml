@@ -16,7 +16,6 @@
         <activity android:name=".activity.transaction.CreateTransactionActivity" />
         <activity android:name=".activity.user.CreateUserActivity" />
         <activity android:name=".activity.category.CreateCategoryActivity" />
-        <activity android:name=".DbDemoActivity" />
         <activity android:name=".activity.recurringtransaction.ManageRecurringTransactionActivity" />
         <activity android:name=".activity.user.InitializeMoneyActivity" />
         <activity android:name=".activity.category.ChooseTransactionCategoryActivity" />
