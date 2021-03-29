@@ -29,3 +29,24 @@
    * When storing into db, they are converted to String, then stored as TEXT type
 
 3. All convert methods are in util/Converter class
+
+## base activity / base fragment
+
+1. have references for global resources so all activity / fragment can use them directly
+
+    * db:           database helper
+    * preference:   shared preference (used for read values)
+    * editor:       shared preference (used for write values in it)
+    * currentUserId:    currently logged in user id (int)
+    * currentUser       currently logged in User object
+    * currentOverview   current user's Overview object
+
+## navigation
+
+1. for going back to the previous page, use onBackPressed()
+
+2. for going to another page but not allowing to use back button (like cannot go back from main page to login page), add CLEAR_TASK | NEW_TASK flags to intents. 
+
+
+
+
