@@ -56,13 +56,13 @@ public class ReportActivity extends BaseActivity {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position){
                 case 0:
-                    tab.setText(getResources().getString(R.string.tab_report_text));
+                    tab.setText(getString(R.string.tab_report_text));
                     break;
                 case 1:
-                    tab.setText(getResources().getString(R.string.tab_report_line_chart));
+                    tab.setText(getString(R.string.tab_report_line_chart));
                     break;
                 case 2:
-                    tab.setText(getResources().getString(R.string.tab_report_pie_chart));
+                    tab.setText(getString(R.string.tab_report_pie_chart));
                     break;
             }
         }).attach();

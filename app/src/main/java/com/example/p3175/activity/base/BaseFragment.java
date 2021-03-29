@@ -23,6 +23,7 @@ import com.example.p3175.db.entity.User;
 @SuppressLint("CommitPrefEdits")
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class BaseFragment extends Fragment {
+    protected static String TAG = "tttt";
 
     protected static FragmentActivity activity;
     protected static SharedPreferences preferences;
@@ -42,12 +43,12 @@ public class BaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         activity = requireActivity();
-        preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        preferences = activity.getSharedPreferences(getString(R.string.shared_preference_name), Context.MODE_PRIVATE);
         editor = preferences.edit();
 
         db = DatabaseHelper.getInstance(activity);
 
-        currentUserId = preferences.getInt(getResources().getString(R.string.logged_in_user_id), -1);
+        currentUserId = preferences.getInt(getString(R.string.logged_in_user_id), -1);
         currentUser = db.selectUser(currentUserId);
         currentOverview = db.selectOverviewByUserId(currentUserId);
     }

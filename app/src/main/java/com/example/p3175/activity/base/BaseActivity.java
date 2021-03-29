@@ -42,15 +42,30 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         db = DatabaseHelper.getInstance(this);
-        preferences = getPreferences(MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.shared_preference_name), MODE_PRIVATE);
         editor = preferences.edit();
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        currentUserId = preferences.getInt(getResources().getString(R.string.logged_in_user_id), -1);
+        getContextualData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getContextualData();
+    }
+
+    private void getContextualData() {
+        currentUserId = preferences.getInt(getString(R.string.logged_in_user_id), -1);
+        if (currentUserId == -1 && getIntent() != null) {
+            currentUserId = getIntent().getIntExtra(getString(R.string.current_user_id), -1);
+        }
         currentUser = db.selectUser(currentUserId);
         currentOverview = db.selectOverviewByUserId(currentUserId);
     }
 
+    @Deprecated
     protected void refreshList(Cursor cursor, ListAdapter<List<String>, ? extends RecyclerView.ViewHolder> adapter) {
         List<List<String>> list = new ArrayList<>();
 

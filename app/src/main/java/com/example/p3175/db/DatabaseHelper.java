@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -30,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static SQLiteDatabase readableDB;
 
     private static final String DB_NAME = "p3175_database"; // can change this name
-    private static int DB_VERSION = 2;
+    private static final int DB_VERSION = 1;
 
     public static final String TABLE_USER = "user";
     public static final String TABLE_OVERVIEW = "overview";
@@ -115,7 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public User selectUserByEmail(String email) {
-        String query = String.format("SELECT * FROM %s WHERE email = %s", TABLE_USER, email);
+        String query = String.format("SELECT * FROM %s WHERE email = '%s'", TABLE_USER, email);
         Cursor cursor = readableDB.rawQuery(query, null);
         if (cursor.moveToNext()) {
             User result = new User(
@@ -130,7 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public User selectUserByEmailPassword(String email, String password) {
-        String query = String.format("SELECT * FROM %s WHERE email = %s AND password = %s",
+        String query = String.format("SELECT * FROM %s WHERE email = '%s' AND password = '%s'",
                 TABLE_USER, email, password);
         Cursor cursor = readableDB.rawQuery(query, null);
         if (cursor.moveToNext()) {
@@ -256,7 +257,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Category> listCategories(boolean isIncome) {
-        String query = String.format("SELECT * FROM %s WHERE is_income = %d", TABLE_CATEGORY, isIncome ? 1 : 0);
+        String query = String.format("SELECT * FROM %s WHERE id != 1 AND is_income = %d", TABLE_CATEGORY, isIncome ? 1 : 0);
         Cursor cursor = readableDB.rawQuery(query, null);
 
         if (cursor.getCount() == 0) {
@@ -310,7 +311,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Transaction> listTransactionsByUserId(int userId) {
-        String query = String.format("SELECT * FROM %s WHERE user_id = %d", TABLE_TRANSACTION, userId);
+        String query = String.format("SELECT * FROM %s WHERE user_id = %d ORDER BY date DESC", TABLE_TRANSACTION, userId);
         Cursor cursor = readableDB.rawQuery(query, null);
 
         if (cursor.getCount() == 0) {
@@ -425,7 +426,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Select all recurring transactions on a given day of month
      */
-    public List<RecurringTransaction> listRecurringTransactionsByUserIdDate(int userId, int dayOfMonth) {
+    public List<RecurringTransaction> listRecurringTransactionsByUserIdDayOfMonth(int userId, int dayOfMonth) {
         String query = String.format(
                 "SELECT * FROM %s WHERE user_id = %d AND day_of_month = %d",
                 TABLE_RECURRING_TRANSACTION, userId, dayOfMonth);
@@ -489,9 +490,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    public List<BigExpense> listBigExpensesByUserId(int userId){
+        String query = String.format("SELECT * FROM %s WHERE user_id = %d ORDER BY id ASC",
+                TABLE_BIG_EXPENSE, userId);
+        Cursor cursor = readableDB.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+
+        List<BigExpense> results = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            results.add(new BigExpense(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    Converter.longToBigDecimal(cursor.getLong(2)),
+                    Converter.stringToLocalDate(cursor.getString(3)),
+                    cursor.getString(4),
+                    Converter.longToBigDecimal(cursor.getLong(5)),
+                    Converter.longToBigDecimal(cursor.getLong(6)),
+                    Converter.longToBigDecimal(cursor.getLong(7))));
+        }
+        cursor.close();
+        return results;
+    }
+
     public long insertBigExpense(BigExpense bigExpense) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, bigExpense.getId());
+        values.put(COLUMN_USER_ID, bigExpense.getUserId());
         values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(bigExpense.getAmount()));
         values.put(COLUMN_DATE, Converter.localDateToString(bigExpense.getDate()));
         values.put(COLUMN_DESCRIPTION, bigExpense.getDescription());
@@ -503,7 +530,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int updateBigExpense(BigExpense bigExpense) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, bigExpense.getId());
+        values.put(COLUMN_USER_ID, bigExpense.getUserId());
         values.put(COLUMN_AMOUNT, Converter.bigDecimalToLong(bigExpense.getAmount()));
         values.put(COLUMN_DATE, Converter.localDateToString(bigExpense.getDate()));
         values.put(COLUMN_DESCRIPTION, bigExpense.getDescription());
@@ -588,6 +615,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "CREATE TABLE %s (" +
                         "%s INTEGER PRIMARY KEY," +
                         "%s INTEGER," +
+                        "%s INTEGER," +
                         "%s TEXT," +
                         "%s TEXT," +
                         "%s INTEGER," +
@@ -596,6 +624,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 TABLE_BIG_EXPENSE,
                 COLUMN_ID,
                 COLUMN_USER_ID,
+                COLUMN_AMOUNT,
                 COLUMN_DATE,            // LocalDate to TEXT
                 COLUMN_DESCRIPTION,
                 COLUMN_BIG_EXPENSE_INCOMES_NEEDED,
@@ -611,16 +640,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_USER_EMAIL, "admin");
-        values.put(COLUMN_USER_PASSWORD, "admin");
+        values.put(COLUMN_USER_PASSWORD, Converter.toMd5("admin"));
         db.insert(TABLE_USER, null, values);
         values.clear();
 
-        values.put(COLUMN_USER_EMAIL, "test");
-        values.put(COLUMN_USER_PASSWORD, "test");
-        db.insert(TABLE_USER, null, values);
-        values.clear();
-
-        values.put(COLUMN_NAME, "Expense 1");
+        values.put(COLUMN_NAME, "RECURRING");
         values.put(COLUMN_CATEGORY_IS_INCOME, 0);
         db.insert(TABLE_CATEGORY, null, values);
         values.clear();

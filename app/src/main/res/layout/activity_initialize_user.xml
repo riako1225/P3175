@@ -7,19 +7,30 @@
     tools:context=".activity.user.InitializeMoneyActivity">
 
     <EditText
-        android:id="@+id/editTextCurrentSavings"
+        android:id="@+id/editTextInitialSalary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/hint_salary"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/editTextInitialSavings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewInitializeUserTitle" />
+
+    <EditText
+        android:id="@+id/editTextInitialSavings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/hint_current_savings"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".8" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonInitialManageRecurring"
+        app:layout_constraintEnd_toEndOf="@+id/editTextInitialSalary"
+        app:layout_constraintStart_toStartOf="@+id/editTextInitialSalary"
+        app:layout_constraintTop_toBottomOf="@+id/editTextInitialSalary" />
 
     <TextView
         android:id="@+id/textViewInitializeUserTitle"
@@ -27,15 +38,13 @@
         android:layout_height="wrap_content"
         android:text="@string/title_initialize"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
+        app:layout_constraintBottom_toTopOf="@+id/guideline42"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".4" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/buttonFirstTimeManageSalary"
+        android:id="@+id/buttonInitialManageRecurring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_text_salary_bill"
@@ -45,7 +54,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline10" />
 
     <Button
-        android:id="@+id/buttonInputInformationToMain"
+        android:id="@+id/buttonInitialOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_text_next"
@@ -66,4 +75,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline42"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15" />
 </androidx.constraintlayout.widget.ConstraintLayout>

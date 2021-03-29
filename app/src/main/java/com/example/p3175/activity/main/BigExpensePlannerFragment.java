@@ -6,19 +6,20 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.p3175.R;
+import com.example.p3175.activity.base.BaseFragment;
+import com.example.p3175.adapter.BigExpenseAdapter;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class BigExpensePlannerFragment extends Fragment {
-
-    public BigExpensePlannerFragment() {
-        // Required empty public constructor
-    }
+public class BigExpensePlannerFragment extends BaseFragment {
+    BigExpenseAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,5 +32,20 @@ public class BigExpensePlannerFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        //region RECYCLER VIEW
+        adapter = new BigExpenseAdapter(activity, false);
+        RecyclerView recyclerView = activity.findViewById(R.id.recyclerViewBigExpense);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+        recyclerView.setAdapter(adapter);
+
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        adapter.submitList(db.listBigExpensesByUserId(currentUserId));
+    }
+
+
 }

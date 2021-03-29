@@ -28,7 +28,7 @@ public class Converter {
     //region BIG DECIMAL <-> LONG
 
     public static BigDecimal longToBigDecimal(long value) {
-        return new BigDecimal(value / 100);
+        return new BigDecimal(value).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
     }
 
     public static long bigDecimalToLong(BigDecimal bigDecimal) {
@@ -38,11 +38,11 @@ public class Converter {
 
     //region BIG DECIMAL <-> STRING
 
-    public static BigDecimal stringToBigDecimal(String string){
+    public static BigDecimal stringToBigDecimal(String string) {
         return new BigDecimal(string);
     }
 
-    public static String bigDecimalToString(BigDecimal bigDecimal){
+    public static String bigDecimalToString(BigDecimal bigDecimal) {
         return bigDecimal.setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 

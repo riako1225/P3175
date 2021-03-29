@@ -1,22 +1,24 @@
 package com.example.p3175.activity.transaction;
 
-import androidx.annotation.RequiresApi;
-
 import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
+import com.example.p3175.db.entity.Category;
 import com.example.p3175.db.entity.Transaction;
+import com.example.p3175.util.Calculator;
 import com.example.p3175.util.Converter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -66,12 +68,12 @@ public class EditTransactionActivity extends BaseActivity {
         //region 2. FILL DATA OF ITEM BEING EDITED
 
         // db select
-        Transaction transaction = db.selectTransaction(getIntent().getIntExtra("transactionId", -1));
+        Transaction transaction = db.selectTransaction(getIntent().getIntExtra(getString(R.string.transaction_id), -1));
         assert transaction != null;
 
         // fill data to edit text
         editTextCategory.setText(db.selectCategory(transaction.getCategoryId()).getName());
-        editTextAmount.setText(Converter.bigDecimalToString(transaction.getAmount()));
+        editTextAmount.setText(Converter.bigDecimalToString(transaction.getAmount().abs()));
         editTextDescription.setText(transaction.getDescription());
 
         datePickerDate = transaction.getDate();
@@ -93,11 +95,20 @@ public class EditTransactionActivity extends BaseActivity {
         //region 4. BUTTON
 
         buttonOK.setOnClickListener(v -> {
-            // db update
-            transaction.setAmount(Converter.stringToBigDecimal(editTextAmount.getText().toString()));
+            BigDecimal oldAmount = transaction.getAmount();
+            BigDecimal newAmount = Converter.stringToBigDecimal(editTextAmount.getText().toString());
+            Category category = db.selectCategory(transaction.getCategoryId());
+            newAmount = category.isIncome() ? newAmount : newAmount.negate();
+
+            // db update: transaction
+            transaction.setAmount(newAmount);
             transaction.setDate(Converter.stringToLocalDate(editTextDate.getText().toString()));
             transaction.setDescription(editTextDescription.getText().toString());
             db.updateTransaction(transaction);
+
+            // db update: overview
+            Calculator.updateIncomesSavings(currentOverview, newAmount.subtract(oldAmount));
+            db.updateOverview(currentOverview);
 
             // nav back
             onBackPressed();

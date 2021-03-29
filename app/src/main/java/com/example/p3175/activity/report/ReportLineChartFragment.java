@@ -12,13 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.p3175.R;
+import com.example.p3175.activity.base.BaseFragment;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class ReportLineChartFragment extends Fragment {
-
-    public ReportLineChartFragment() {
-        // Required empty public constructor
-    }
+public class ReportLineChartFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

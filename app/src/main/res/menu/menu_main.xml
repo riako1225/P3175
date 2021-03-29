@@ -8,11 +8,14 @@
         android:id="@+id/menuItemSalaryBill"
         android:title="@string/menu_item_salary_bill" />
     <item
-        android:id="@+id/menuItemAccount"
-        android:title="@string/menu_item_setting" />
+        android:id="@+id/menuItemAddSavings"
+        android:title="@string/menu_item_add_savings" />
     <item
         android:id="@+id/menuItemReport"
         android:title="@string/menu_item_report" />
+    <item
+        android:id="@+id/menuItemAccount"
+        android:title="@string/menu_item_setting" />
     <item
         android:id="@+id/menuItemLogout"
         android:title="@string/menu_item_log_out" />

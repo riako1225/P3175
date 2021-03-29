@@ -1,11 +1,5 @@
 package com.example.p3175.activity.recurringtransaction;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +8,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
 import com.example.p3175.adapter.RecurringTransactionAdapter;
 import com.example.p3175.db.DatabaseHelper;
 import com.example.p3175.db.entity.RecurringTransaction;
-
-import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ManageRecurringTransactionActivity extends BaseActivity {
@@ -31,7 +29,6 @@ public class ManageRecurringTransactionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_recurring_transaction);
-
         //region 0. VIEW
 
         RecyclerView recyclerViewIncome = findViewById(R.id.recyclerViewIncome);
@@ -103,7 +100,9 @@ public class ManageRecurringTransactionActivity extends BaseActivity {
         //region 3. BUTTON CREATE
 
         buttonCreate.setOnClickListener(v -> {
-            startActivity(new Intent(this, CreateRecurringTransactionActivity.class));
+            Intent intent = new Intent(this, CreateRecurringTransactionActivity.class);
+            intent.putExtra(getString(R.string.current_user_id), currentUserId);
+            startActivity(intent);
         });
         //endregion
     }

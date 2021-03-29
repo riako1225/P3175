@@ -15,11 +15,10 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.p3175.R;
+import com.example.p3175.activity.recurringtransaction.EditRecurringTransactionActivity;
 import com.example.p3175.activity.transaction.EditTransactionActivity;
 import com.example.p3175.db.entity.RecurringTransaction;
 import com.example.p3175.util.Converter;
-
-import java.math.BigDecimal;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class RecurringTransactionAdapter extends ListAdapter<RecurringTransaction, RecurringTransactionAdapter.RecurringTransactionViewHolder> {
@@ -56,6 +55,8 @@ public class RecurringTransactionAdapter extends ListAdapter<RecurringTransactio
     public void onBindViewHolder(@NonNull RecurringTransactionViewHolder holder, int position) {
         RecurringTransaction recurringTransaction = getItem(position);
 
+
+
         // set text
         holder.textViewRecurringTransactionId.setText(String.valueOf(position + 1));
         holder.textViewRecurringTransactionDayOfMonth.setText(String.valueOf(recurringTransaction.getDayOfMonth()));
@@ -65,8 +66,8 @@ public class RecurringTransactionAdapter extends ListAdapter<RecurringTransactio
 
         // click to edit
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, EditTransactionActivity.class);
-            intent.putExtra("recurringTransactionId", recurringTransaction.getId());
+            Intent intent = new Intent(activity, EditRecurringTransactionActivity.class);
+            intent.putExtra(activity.getString(R.string.recurring_transaction_id), recurringTransaction.getId());
             activity.startActivity(intent);
         });
     }

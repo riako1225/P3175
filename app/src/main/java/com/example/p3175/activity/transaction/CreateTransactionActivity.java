@@ -1,23 +1,26 @@
 package com.example.p3175.activity.transaction;
 
-import androidx.annotation.RequiresApi;
-
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
+import com.example.p3175.activity.main.MainActivity;
+import com.example.p3175.db.entity.Category;
 import com.example.p3175.db.entity.Transaction;
+import com.example.p3175.util.Calculator;
 import com.example.p3175.util.Converter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -83,16 +86,27 @@ public class CreateTransactionActivity extends BaseActivity {
         //region 3. BUTTON
 
         buttonOK.setOnClickListener(v -> {
-            // db insert
-            db.insertTransaction(new Transaction(
-                    currentUserId,
-                    getIntent().getIntExtra("categoryId", -1),
-                    Converter.stringToBigDecimal(editTextAmount.getText().toString()),
-                    Converter.stringToLocalDate(editTextDate.getText().toString()),
-                    editTextDescription.getText().toString()));
+            int categoryId = getIntent().getIntExtra("categoryId", -1);
+            Category category = db.selectCategory(categoryId);
+            assert category != null;
+            BigDecimal amount = Converter.stringToBigDecimal(editTextAmount.getText().toString());
+            amount = category.isIncome() ? amount : amount.negate();    // make amount negative for expense
+            LocalDate date = Converter.stringToLocalDate(editTextDate.getText().toString());
 
-            // nav back
-            onBackPressed();
+            // db insert: transaction
+            db.insertTransaction(new Transaction(currentUserId, categoryId, amount, date, editTextDescription.getText().toString()));
+
+            // db update: overview
+            Calculator.updateIncomesSavings(currentOverview, amount);
+            if (date.equals(LocalDate.now())) {     // if this transaction is today, update today's remaining
+                Calculator.updateTodayRemainingAllowed(currentOverview, amount);
+            }
+            db.updateOverview(currentOverview);
+
+            // nav to main activity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
         //endregion
 

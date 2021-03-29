@@ -3,7 +3,6 @@ package com.example.p3175.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         // click to edit
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(activity, EditTransactionActivity.class);
-            intent.putExtra("transactionId", transaction.getId());
+            intent.putExtra(activity.getString(R.string.transaction_id), transaction.getId());
             activity.startActivity(intent);
         });
     }

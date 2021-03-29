@@ -2,23 +2,18 @@ package com.example.p3175.activity.report;
 
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
 import com.example.p3175.R;
+import com.example.p3175.activity.base.BaseFragment;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class ReportPieChartFragment extends Fragment {
-
-    public ReportPieChartFragment() {
-        // Required empty public constructor
-    }
+public class ReportPieChartFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

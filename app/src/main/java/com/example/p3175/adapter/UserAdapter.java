@@ -1,6 +1,5 @@
 package com.example.p3175.adapter;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.p3175.R;
-import com.example.p3175.activity.transaction.EditTransactionActivity;
 import com.example.p3175.db.entity.User;
-
-import java.util.List;
 
 public class UserAdapter extends ListAdapter<User, UserAdapter.UserViewHolder> {
 

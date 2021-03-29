@@ -55,8 +55,8 @@ public class CreateBigExpenseActivity extends BaseActivity {
         buttonOK.setOnClickListener(v -> {
             // nav to get plan activity
             Intent intent = new Intent(this, GetBigExpensePlanActivity.class);
-            intent.putExtra("amount", Converter.bigDecimalToLong(new BigDecimal(editTextAmount.getText().toString())));
-            intent.putExtra("description", editTextDescription.getText().toString());
+            intent.putExtra(getString(R.string.amount), Converter.bigDecimalToLong(new BigDecimal(editTextAmount.getText().toString())));
+            intent.putExtra(getString(R.string.description), editTextDescription.getText().toString());
             startActivity(intent);
         });
         //endregion

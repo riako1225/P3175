@@ -1,7 +1,5 @@
 package com.example.p3175.activity.recurringtransaction;
 
-import androidx.annotation.RequiresApi;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +7,8 @@ import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.p3175.R;
 import com.example.p3175.activity.base.BaseActivity;
@@ -64,11 +64,12 @@ public class EditRecurringTransactionActivity extends BaseActivity {
         //region 2. FILL DATA OF ITEM BEING EDITED
 
         // db select
-        RecurringTransaction recurringTransaction = db.selectRecurringTransaction(getIntent().getIntExtra("recurringTransactionId", -1));
+        RecurringTransaction recurringTransaction = db.selectRecurringTransaction(getIntent().getIntExtra(getString(R.string.recurring_transaction_id), -1));
         assert recurringTransaction != null;
 
         // fill data to edit text
-        editTextAmount.setText(Converter.bigDecimalToString(recurringTransaction.getAmount()));
+        radioButtonIsBill.setChecked(recurringTransaction.getAmount().compareTo(BigDecimal.ZERO) < 0);
+        editTextAmount.setText(Converter.bigDecimalToString(recurringTransaction.getAmount().abs()));
         editTextDayOfMonth.setText(String.valueOf(recurringTransaction.getDayOfMonth()));
         editTextDescription.setText(recurringTransaction.getDescription());
         //endregion

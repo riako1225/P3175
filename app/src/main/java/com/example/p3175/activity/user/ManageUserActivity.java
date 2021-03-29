@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
@@ -33,24 +34,15 @@ public class ManageUserActivity extends BaseActivity {
         adapter = new UserAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
-        // get all users from db
-
-
-        // refresh the list
-
-
-        //endregion
-
-        //region ?. SWIPE TO DELETE
-
         //endregion
 
         //region 2. BUTTON CREATE
 
         buttonCreateAccount.setOnClickListener(v -> {
             // nav to edit user activity
-
+            Intent intent = new Intent(this, CreateUserActivity.class);
+            intent.putExtra("isCreatedByAdmin", true);
+            startActivity(intent);
         });
         //endregion
 
